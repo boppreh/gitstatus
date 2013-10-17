@@ -9,7 +9,8 @@ class Repository(object):
         self.repo = repo
 
     def __str__(self):
-        return self.name
+        status = 'Dirty' if self.repo.is_dirty() else 'Ok'
+        return '{} [{}]'.format(self.name, status)
 
 
 def get_repos():
