@@ -9,8 +9,18 @@ class Repository(object):
         self.repo = repo
 
     def __str__(self):
-        status = 'Dirty' if self.repo.is_dirty() else 'Ok'
-        return '{} [{}]'.format(self.name, status)
+        status = 'Dirty' if self.repo.is_dirty() else 'Commited'
+        sync = 'Out of sync' if not self.is_synced() else 'Synced'
+        return '{} [{} {}]'.format(self.name, status, sync)
+
+    def is_synced(self):
+        remote = self.repo.remote()
+        if not remote:
+            return True
+
+        local_commit = self.repo.commit()
+        remote_commit = remote.fetch()[0].commit
+        return local_commit.hexsha == remote_commit.hexsha
 
 
 def get_repos():
