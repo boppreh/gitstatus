@@ -2,6 +2,9 @@ import os
 import git
 
 projects_dir = r'D:\projects'
+# Exclude private repos so we don't have to deal with authentication from
+# fetches.
+exclude = ['shamir', 'structured-editor']
 
 class Repository(object):
     def __init__(self, name, repo):
@@ -26,6 +29,9 @@ class Repository(object):
 def get_repos():
     repos = []
     for folder in os.listdir(projects_dir):
+        if folder in exclude:
+            continue
+
         path = os.path.join(projects_dir, folder)
         try:
             repos.append(Repository(folder, git.Repo(path)))
