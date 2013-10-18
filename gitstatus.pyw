@@ -1,3 +1,5 @@
+import threading
+import time
 import os
 import git
 
@@ -45,3 +47,35 @@ def get_repos():
         except git.exc.InvalidGitRepositoryError:
             continue
     return repos
+
+class Updater(threading.Thread):
+    def __init__(self, interval, function):
+        threading.Thread.__init__(self)
+        self.interval = interval
+        self.function = function
+        self.cancelled = False
+
+    def run(self):
+        while not self.cancelled:
+            time.sleep(self.interval)
+            self.function()
+
+if __name__ == '__main__':
+    repos = get_repos()
+
+    def update_dirty_status():
+        for repo in repos:
+            repo.update_dirty_status()
+
+    def update_sync_status():
+        for repo in repos:
+            repo.update_sync_status()
+
+    Updater(60, update_dirty_status).start()
+    Updater(60 * 30, update_sync_status).start()
+
+    from tray import tray
+    tray('Git Status', 'git.png')
+
+    from simpleserver import serve
+    serve(lambda: map(str, repos), port=4327)
