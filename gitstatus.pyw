@@ -4,9 +4,7 @@ import os
 import git
 
 projects_dir = r'D:\projects'
-# Exclude private repos so we don't have to deal with authentication from
-# fetches.
-exclude = ['shamir', 'structured-editor']
+exclude = ['old']
 
 class Repository(object):
     def __init__(self, name, repo):
