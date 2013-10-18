@@ -10,11 +10,18 @@ class Repository(object):
     def __init__(self, name, repo):
         self.name = name
         self.repo = repo
+        self.dirty_status = '?'
+        self.sync_status = '?'
+
+    def update_dirty_status(self):
+        self.dirty_status = 'Dirty' if self.repo.is_dirty() else 'Commited'
+
+    def update_sync_status(self):
+        self.sync_status = 'Out of sync' if not self.is_synced() else 'Synced'
 
     def __str__(self):
-        status = 'Dirty' if self.repo.is_dirty() else 'Commited'
-        sync = 'Out of sync' if not self.is_synced() else 'Synced'
-        return '{} [{} {}]'.format(self.name, status, sync)
+        return '{} [{} {}]'.format(self.name, self.dirty_status,
+                                   self.sync_status)
 
     def is_synced(self):
         remote = self.repo.remote()
@@ -38,6 +45,3 @@ def get_repos():
         except git.exc.InvalidGitRepositoryError:
             continue
     return repos
-
-for repo in get_repos():
-    print repo
