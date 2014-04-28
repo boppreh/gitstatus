@@ -37,7 +37,7 @@ class Repository(object):
         if ignore_output:
             return os.system(command)
         else:
-            return check_output(command)
+            return check_output(command, shell=True)
 
 def get_repos():
     for folder in os.listdir(projects_dir):
